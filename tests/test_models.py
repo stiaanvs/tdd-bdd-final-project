@@ -27,7 +27,7 @@ import os
 import logging
 import unittest
 from decimal import Decimal
-from service.models import Product, Category, db
+from service.models import Product, Category, db, DataValidationError
 from service import app
 from tests.factories import ProductFactory
 
@@ -82,6 +82,12 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(product.price, 12.50)
         self.assertEqual(product.category, Category.CLOTHS)
 
+    def test_create_a_product_with_invalid_availability(self):
+        """It must raise a TypeError"""
+        product = ProductFactory()
+        product.id = None
+        self.assertRaises(TypeError, product.available, "x")
+
     def test_add_a_product(self):
         """It should Create a product and add it to the database"""
         products = Product.all()
@@ -135,6 +141,14 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(len(products), 1)
         self.assertEqual(products[0].id, original_id)
         self.assertEqual(products[0].description, "testing")
+
+
+    def test_update_a_product_without_id(self):
+        """It should raise DataValidationError"""
+        product = ProductFactory()
+        product.id = None
+        self.assertRaises(DataValidationError, product.update)
+
 
     def test_delete_a_product(self):
         """It should Delete a Product"""

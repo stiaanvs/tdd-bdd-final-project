@@ -30,7 +30,7 @@ from decimal import Decimal
 from unittest import TestCase
 from service import app
 from service.common import status
-from service.models import db, init_db, Product, Category
+from service.models import db, init_db, Product
 from tests.factories import ProductFactory
 from urllib.parse import quote_plus
 
@@ -199,7 +199,7 @@ class TestProductRoutes(TestCase):
         self.assertEqual(updated_product["description"], "unknown")
 
     def test_update_non_existing_product(self):
-        """It should return HTTP_404_NOT_FOUND"""   
+        """It should return HTTP_404_NOT_FOUND"""
         test_product = ProductFactory()
         test_product.id = 999
         response = self.client.put(f"{BASE_URL}/{999}", json=test_product.serialize())
@@ -263,7 +263,7 @@ class TestProductRoutes(TestCase):
         """It should Query Products by availability"""
         products = self._create_products(10)
         available_products = [product for product in products if product.available is True]
-        available_count = len(available_products)        
+        available_count = len(available_products)
         # test for available
         response = self.client.get(
             BASE_URL, query_string="available=true"
